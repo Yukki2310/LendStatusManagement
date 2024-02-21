@@ -1,0 +1,96 @@
+﻿{% extends "layout.html" %}
+{% block content %}
+
+    <div class="page-header">
+        <h1>物品一覧</h1>
+    </div>
+    <p>全ての物品を表示しています。</p>
+
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+    <div class="{{ category }}">{{ message }}</div>
+    {% endfor %}
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>品名</th>
+                <th>ステータス</th>
+                <th>最終更新日</th>
+                <th>返却予定日</th>
+                <th>備考</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>
+                    <a href="{{ url_for('item.detail_item', item_id=item.id) }}">{{ item.name }}</a>
+                </td>
+                {% if item.user_id == None %}
+                <td>
+                    <span class="label label-success">利用可能</span>
+                </td>
+                {% else %}
+                <td>
+                    <span class="label label-warning">貸出し中</span>
+                </td>
+                {% endif %}
+                <td>{{ item.last_update }}</td>
+                <td>{{ item.return_schedule }}</td>
+                <td>{{ item.note }}</td>
+                <td>
+                    {% if item.user_id == None %}
+                    <a href="{{ url_for('item.lend_item', item_id=item.id) }}" class="btn btn-primary">借りる</a>
+                    &nbsp;
+                    {% else %}
+                    <a class="btn btn-default" disabled="disabled">借りる</a>
+                    &nbsp;
+                    {% endif %}
+
+                    {% if g.user.is_admin %}
+                    <a href="{{ url_for('item.update_item', item_id=item.id) }}" class="btn btn-default">編集</a>
+                    &nbsp;
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{ item.id }}">削除</button>
+                     <!-- モーダル・ダイアログ -->
+                    <div class="modal fade" id="deleteModal{{ item.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+                                    <h4 class="modal-title">削除確認</h4>
+                                </div>
+                                <div class="modal-body">
+                                    {{ item.name }}を本当に削除しますか？
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="row">
+                                        <div class="col-md-7"></div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <form method="post" action="{{ url_for('item.delete_item', item_id=item.id) }}">
+                                                <button type="submit" class="btn btn-danger">削除する</button>
+                                            </form>
+                                        </div>
+                                        <div class="col-md-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <td>物品が登録されていません</td>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if g.user.is_admin %}
+    <p><a href="{{ url_for('item.create_item') }}" class="btn btn-primary btn-large">物品の追加</a></p>
+    {% endif %}
+
+{% endblock %}

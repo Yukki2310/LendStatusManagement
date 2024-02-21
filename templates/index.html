@@ -1,0 +1,18 @@
+﻿{% extends "layout.html" %}
+{% block content %}
+
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+    <div class="{{ category }}">{{ message }}</div>
+    {% endfor %}
+
+    <div class="jumbotron">
+        <h1>物品管理</h1>
+        <p class="lead">物品の貸出管理システムです</p>
+        <p>
+            <a href="{{ url_for('item.index_item') }}" class="btn btn-primary btn-large">物品を借りる &raquo;</a>
+            &nbsp;
+            <a href="{{ url_for('item.my_status') }}" class="btn btn-primary btn-large">借りている物品の確認・返却 &raquo;</a>
+        </p>
+    </div>
+
+{% endblock %}

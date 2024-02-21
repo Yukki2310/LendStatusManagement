@@ -1,0 +1,12 @@
+﻿{% extends "layout.html" %}
+{% block content %}
+
+    <h1 style="margin-bottom:50px">削除確認</h1>
+
+    <p>{{ item.name }}を本当に削除しますか？（<a href={{url_for('item.index_item')}}>戻る</a>）</p>
+
+    <form method="post">
+        <button type="submit" class="btn btn-primary">削除</button>
+    </form>
+
+{% endblock %}

@@ -1,0 +1,32 @@
+﻿{% extends "layout.html" %}
+{% block content %}
+    <div class="page-header">
+        <h1>物品情報編集</h1>
+    </div>
+    <p>物品に関する情報を編集できます。</p>
+
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+    <div class="{{ category }}">{{ message }}</div>
+    {% endfor %}
+
+    <form method="post" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">品名</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="name" value="{{ item.name }}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">詳細</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" name="detail" rows="10">{{ item.detail }}</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">更新</button>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <div class="page-header">
+        <h1>物品詳細</h1>
+    </div>
+    <p>物品に関する詳細情報を表示しています。</p>
+
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+    <div class="{{ category }}">{{ message }}</div>
+    {% endfor %}
+
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">品名</label>
+            <div class="col-sm-10">
+                <p class="form-control-static">{{ item.name }}</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">詳細</label>
+            <div class="col-sm-10">
+                <p class="form-control-static">{{ item.detail|replace('\n', '<br>')|safe }}</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">ステータス</label>
+            <div class="col-sm-10">
+                <p class="form-control-static">
+                    {% if item.user_id == None %}
+                    <span class="label label-success">利用可能</span>
+                    {% else %}
+                    <span class="label label-warning">貸出し中</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">貸出し中ユーザー</label>
+            <div class="col-sm-10">
+                <p class="form-control-static">{{ item.user_id }}</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">返却予定日</label>
+            <div class="col-sm-10">
+                <p class="form-control-static">{{ item.return_schedule }}</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">最終更新日</label>
+            <div class="col-sm-10">
+                <p class="form-control-static">{{ item.last_update }}</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">備考</label>
+            <div class="col-sm-10">
+                <p class="form-control-static">{{ item.note }}</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                {% if item.user_id == None %}
+                <a href="{{ url_for('item.lend_item', item_id=item.id) }}" class="btn btn-primary">借りる</a>
+                &nbsp;
+                <a class="btn btn-default" disabled="disabled">返却する</a>
+
+                {% elif item.user_id == g.user.id %}
+                <a class="btn btn-default" disabled="disabled">借りる</a>
+                &nbsp;
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#returnModal{{ item.id }}">返却する</button>
+
+                {% endif %}
+            </div>
+        </div>
+    </form>
+
+    <!-- モーダル・ダイアログ -->
+    <div class="modal fade" id="returnModal{{ item.id }}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+                    <h4 class="modal-title">返却確認</h4>
+                </div>
+                <div class="modal-body">
+                    {{ item.name }}を本当に返却しますか？
+                </div>
+                <div class="modal-footer">
+                    <form method="post" action="{{ url_for('item.return_item', item_id=item.id) }}">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+                        <button type="submit" class="btn btn-danger">返却する</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

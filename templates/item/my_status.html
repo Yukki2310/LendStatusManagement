@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <div class="page-header">
+        <h1>貸出し物品の確認・返却</h1>
+    </div>
+    <p>{{ g.user.username }}さんに貸出し中の備品を表示しています。</p>
+
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+    <div class="{{ category }}">{{ message }}</div>
+    {% endfor %}
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>品名</th>
+                <th>ステータス</th>
+                <th>最終更新日</th>
+                <th>返却予定日</th>
+                <th>備考</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                {% if item.user_id == None %}
+                <td>
+                    <span class="label label-success">利用可能</span>
+                </td>
+                {% else %}
+                <td>
+                    <span class="label label-warning">貸出し中</span>
+                </td>
+                {% endif %}
+                <td>{{ item.last_update }}</td>
+                <td>{{ item.return_schedule }}</td>
+                <td>{{ item.note }}</td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#returnModal{{ item.id }}">返却する</button>
+                     <!-- モーダル・ダイアログ -->
+                    <div class="modal fade" id="returnModal{{ item.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+                                    <h4 class="modal-title">返却確認</h4>
+                                </div>
+                                <div class="modal-body">
+                                    {{ item.name }}を本当に返却しますか？
+                                </div>
+                                <div class="modal-footer">
+                                    <form method="post" action="{{ url_for('item.return_item', item_id=item.id) }}">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+                                        <button type="submit" class="btn btn-danger">返却する</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <td>貸出し中の物品はありません</td>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

@@ -1,0 +1,32 @@
+﻿{% extends "layout.html" %}
+{% block content %}
+    <div class="page-header">
+        <h1>物品追加</h1>
+    </div>
+    <p>新たに管理する物品を追加できます。</p>
+
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+    <div class="{{ category }}">{{ message }}</div>
+    {% endfor %}
+
+    <form method="post" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">品名</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="name" placeholder="品名を入力してください。">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">詳細</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" name="detail" placeholder="物品の詳細を入力してください。" rows="10"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">新規追加</button>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
